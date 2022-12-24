@@ -13,4 +13,5 @@ ITEM_TOTAL = slice(55, None)
 
 line_items = invoice.split('\n')[2:]
 for item in line_items:
+    #注意UNIT_PRICE作为切片位置参数时的定义slice(起始位置，终止位置)
     print(item[UNIT_PRICE], item[DESCRIPITION])

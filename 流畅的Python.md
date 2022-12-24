@@ -1,8 +1,8 @@
-流畅的Python
+# 流畅的Python
 
 
 
-第一章：Python数据模型
+## 第一章：Python数据模型
 
 1.1	一摞Python风格的纸牌
 
@@ -10,7 +10,7 @@
 
 
 
-本章总结：
+### 本章总结：
 
 介绍了一些特殊方法
 
@@ -18,9 +18,9 @@ getitem,len,contains,iter,repr,abs,add,mulstr,bool
 
 
 
-第二章：序列构成的数组
+## 第二章：序列构成的数组
 
-列表推导和可读性
+### 列表推导和可读性
 
 2.1	把一个字符串编程Unicode码位的列表
 
@@ -36,7 +36,7 @@ getitem,len,contains,iter,repr,abs,add,mulstr,bool
 
 
 
-元组
+### 元组
 
 2.7	把元组用作记录
 
@@ -48,7 +48,7 @@ getitem,len,contains,iter,repr,abs,add,mulstr,bool
 
 
 
-切片
+### 切片
 
 2.11	纯文本文件形式的收据以一行字符串的形式被解析
 
@@ -58,7 +58,7 @@ getitem,len,contains,iter,repr,abs,add,mulstr,bool
 
 
 
-序列的增量赋值
+### 序列的增量赋值
 
 2.14	一个谜题
 
@@ -68,7 +68,7 @@ getitem,len,contains,iter,repr,abs,add,mulstr,bool
 
 
 
-用bisect来管理已排序的序列
+### 用bisect来管理已排序的序列
 
 2.17	在有序序列中使用bisect查找某个元素的插入位置
 
@@ -78,7 +78,7 @@ getitem,len,contains,iter,repr,abs,add,mulstr,bool
 
 
 
-数组
+### 数组
 
 2.20	一个浮点型数组的创建、存入文件和从文件读取的过程
 
@@ -88,13 +88,13 @@ getitem,len,contains,iter,repr,abs,add,mulstr,bool
 
 
 
-双向队列和其他形式的队列
+### 双向队列和其他形式的队列
 
 2.23	使用双向队列
 
 
 
-本章总结：
+### 本章总结：
 
 序列可以分为可变和不可变，或者扁平序列和容器序列
 

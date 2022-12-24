@@ -12,7 +12,8 @@ ROW_FMT = '{0:2d} @ {1:2d}    {2}{0:<2d}'
 def demo(bisect_fn):
     for needle in reversed(NEEDLES):
         position = bisect_fn(HAYSTACK, needle)
-        offset = position * '  |'
+        #position前后都没有关系
+        offset = '  |' * position
         print(ROW_FMT.format(needle, position, offset))
 
 
