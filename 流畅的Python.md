@@ -189,3 +189,83 @@ numpy,scipy
 3.17	将同样的数据以不同的顺序添加到3个字典里
 
 3.18	3.17中输出的3个字典的结果顺序是不一样的
+
+
+
+### 本章总结
+
+标准库提供的一些映射类型
+
+defaultdict,OrderDict,ChianMap,Count
+
+两个强大方法：setdefault,update
+
+通过__missing__来定义找不到对象时的操作
+
+colletions.abc模块中提供Mapping 和 MutableMapping两个基类
+
+types中MappingProxyType创建不可变映射对象
+
+Set 和MutableSet 两个抽象基本类
+
+dict和set的散列概念
+
+
+
+
+
+## 第四章：文本和字节序列
+
+### 字符问题
+
+4.1	编码和解码
+
+
+
+### 字节概要
+
+4.2	包含5个字节的bytes和bytearray对象
+
+4.3	使用数组中的原始数据初始化bytes对象
+
+4.4	使用memoryview和struct查看一个GIF图像的首部
+
+
+
+### 基本的编码器
+
+4.5	使用3个编译器编码字符串"El Niño"，得到的字节序列差异很大
+
+
+
+### 处理UnicodeEncodeError
+
+4.6	编码成字节序列：成功和错误的处理
+
+
+
+### 处理UnicodeDecodeError
+
+4.7	把字节序列解码成字符串：成功和错误处理
+
+
+
+### 使用预期之外的编码加载模块时抛出的SyntaxError
+
+4.8	"你好，世界"的葡萄牙语版本
+
+
+
+### 处理文本文件
+
+4.9	一个平台上的编码问题（可能发生，也可能不发生）
+
+4.10	细分析在windows中运行的示例4_9，找出并修正问题
+
+
+
+### 编码默认值
+
+4.11	探索编码的默认值
+
+4.12	4_11在不同windows版本中的表现
