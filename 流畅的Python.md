@@ -290,3 +290,46 @@ dict和set的散列概念
 
 4_18	4_17中的实例
 
+
+
+### Unicode文本排序
+
+4.19	使用locale.strxfrm函数做排序键
+
+4.20	使用pyuca.collator.sort_key方法
+
+
+
+### Unicode数据库
+
+4.21	Unicode数据库中数值字符的元数据示例
+
+
+
+### 正则表达式中的字符串和字节序列
+
+4.22	比较简单的字符串正则表达式和字节序列正则表达式的行为
+
+
+
+### os函数中的字符串和字节序列
+
+4.23	把字符串和字节序列参数传给listdir函数得到的结果
+
+4.24	使用surrogateescape 错误处理方式
+
+
+
+### 本章总结
+
+区别字符和字节
+
+bytes，bytearray，memoryview
+
+Chardet包
+
+设置合理的编码
+
+locale来排序
+
+PyUCA包
