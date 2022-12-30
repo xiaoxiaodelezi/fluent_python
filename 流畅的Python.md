@@ -387,3 +387,65 @@ PyUCA包
 5.10	# tag函数用于生成HTML标签，使用名为cls的关键字参数传入“class”属性,这是一种变通方法，因为“class”是Python的关键字
 
 5.11	tag函数的调用示例
+
+
+
+### 获取关于参数的信息
+
+5.12	Bobo知道hello需要person参数，并且从HTTP请求中获取它
+
+5.13	如果请求中缺少参数，Bobo返回403 forbidden响应
+
+5.14	传入所需要的person参数才能得到OK响应
+
+5.15	在指定长度附近截断字符串的函数
+
+5.16	提取关于函数参数的信息
+
+5.17	提取函数的签名
+
+5.18	把tag函数的签名绑定到一个参数字典上
+
+
+
+### 函数注解
+
+5.19	有注解的clip函数
+
+5.20	从函数签名中提取注解
+
+
+
+### operator模块
+
+5.21	使用reduce函数和一个匿名函数计算阶乘
+
+5.22	使用reduce和operator.mul函数计算阶乘
+
+5.23	演示使用itemgetter排序一个元组列表
+
+5.24	定义一个nametuple，名为metro_data，用attrgetter来处理它
+
+5.25	methodcaller使用示例
+
+
+
+### 使用functools.partial冻结参数
+
+5.26	使用partia把一两个参数函数改编成需要单参数的可调用对象
+
+5.27	用partial 构建一个便利的Unicode规范化函数
+
+5.28	把partial应用到tag函数上
+
+
+
+### 本章小结
+
+探讨函数的一等本性
+
+Python的7种可调用对象
+
+inspect模块
+
+functools.partial函数
