@@ -577,3 +577,39 @@ functools.partial函数
 7.20	生成HTML的htmlize函数，调整几种输出对象的输出
 
 7.21	singledispact创建一个自定义的htmlize.register装饰器，把多个函数绑在一起组成一个泛函数
+
+
+
+### 参数化装饰器
+
+7.22	7_2的删减版
+
+
+
+### 一个参数化的注册装饰器
+
+7.23	为了接受参数，新的register装饰器必须作为函数调用
+
+7.24	使用7_23的程序
+
+
+
+### 参数化clock装饰器
+
+7.25	参数化clock装饰器
+
+7.26	demo1
+
+7.27	demo2
+
+
+
+### 本章小结
+
+从一个没有内部函数的装饰器到有两层嵌套的装饰器
+
+functools.wraps
+
+functools.lru_cache
+
+functools.singledispatch
