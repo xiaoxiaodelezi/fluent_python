@@ -1,0 +1,12 @@
+# 生成HTML的htmlize函数，调整几种输出对象的输出
+
+import html
+
+def htmlize(obj):
+    content=html.escape(repr(obj))
+    return'<pre>{}</pre>'.format(content)
+
+print(htmlize({1,2,3}))
+print(htmlize(abs))
+print(htmlize('Heimlich & Co.\n -a game'))
+print(htmlize(42))
