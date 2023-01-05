@@ -1,0 +1,1 @@
+# Tombola子类的doctest

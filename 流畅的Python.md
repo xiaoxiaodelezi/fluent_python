@@ -726,7 +726,7 @@ is 和 ==的区别
 
 
 
-## 符合Python风格的对象
+## 第九章：符合Python风格的对象
 
 ### 再谈向量类
 
@@ -800,7 +800,7 @@ slots
 
 
 
-## 序列的修改、散列和切片
+## 第十章：序列的修改、散列和切片
 
 ### Vector类第一版
 
@@ -859,4 +859,110 @@ slots
 ### Vector第五版
 
 10.16	全部代码
+
+
+
+### 本章总结
+
+通过getitem和len方法来实现vector的序列化
+
+了解切片原理，并使用在vector上
+
+getattr和setattr设置属性
+
+hash和eq方法来实现散列
+
+
+
+
+
+## 第十一章：接口：从协议到抽象基类
+
+### Python文化中的接口和协议
+
+11.1	x和y是公开属性
+
+11.2	使用特性实现x和y
+
+
+
+### Python喜欢序列
+
+11.3	定义getitem方法，只实现序列协议的一部分，这样足够访问元素，迭代和使用in运算符了
+
+11.4	实现序列协议的FrenchDeck类
+
+
+
+### 使用猴子补丁在运行时实现协议
+
+11.5	random.shuffle函数不能打乱FrenchDeck实例
+
+11.6	为frenchdeck打猴子补丁，把它变成可变的，让random.shuffle函数能处理
+
+
+
+### Alex Martelli的水禽
+
+11.7	使用鸭子类型处理单个字符串或由字符串组成的可迭代对象
+
+
+
+### 定义抽象基类的子类
+
+11.8	franchdeck2 是collections.MutableSequence的子类
+
+
+
+### 定义并使用一个抽象基类
+
+11.9	Tombola是抽象基类，有两个抽象方法和两个具体方法
+
+11.10	异常结构的部分层次结构
+
+11.11	不符合Tombola要求的子类无法蒙混过关
+
+
+
+### 定义Tombola抽象基类的子类
+
+11.12	BingoCage是Tombola的具体子类
+
+11.13	LotteryBlower是Tombola的具体子类，覆盖了继承的inspect和loaded方法
+
+
+
+###  Tombola的虚拟子类
+
+11.14	TomboList是Tombola的虚拟子类
+
+
+
+### Tombola子类的测试方法
+
+11.15	Tombola 子类的测试运行程序
+
+11.16	Tombola子类的doctest
+
+
+
+### 鹅的行为有可能像鸭子
+
+11.17	Sized类的源码
+
+
+
+### 本章总结
+
+协议的高度动态本性
+
+抽象基类的静态接口声明
+
+虚拟子类
+
+subclasshook
+
+鸭子和白鹅的区别
+
+抽象基类
 
