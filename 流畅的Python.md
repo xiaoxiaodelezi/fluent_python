@@ -966,3 +966,31 @@ subclasshook
 
 抽象基类
 
+
+
+
+
+## 继承的优缺点
+
+###子类化内置类型很麻烦
+
+12.1	内置类型dict的init和update方法会忽略我们覆盖的setitem方法
+
+12.2	dict.update 方法会忽略AnswerDict.getitem方法
+
+12.3	DoppelDict2 和 AnswerDict2能像预期那样使用，因为它们扩展的什UserDict，而不是Dict
+
+
+
+### 多呈继承和方法解析顺序
+
+12.4	ABC和D四个类
+
+12.5	在D实例上调用
+
+12.6	使用super()函数调用ping方法
+
+12.7	使用super()函数调用ping方法
+
+12.8	查看几个类的mro属性
+
