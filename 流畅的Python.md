@@ -998,6 +998,10 @@ subclasshook
 
 ### 本章总结
 
+选择继承collections.abc的抽象基类而不是内置类型
+
+mro类属性蕴藏的方法解析顺序
+
 
 
 
@@ -1049,4 +1053,28 @@ subclasshook
 13.13	改进vector的eq方法
 
 13.14	与13_12一样的测试，最后一个结果变了
+
+
+
+### 增量赋值运算符
+
+13.15	增量赋值不会修改不可变目标，而是新建实例，然后重新绑定
+
+13.16	使用+运算符新建addablebingocage实例
+
+13.17	可以使用+=运算符载入现有的addablebingocage实例
+
+13.18	addablebingocage 扩展 bingocage 支持+ 和+= 
+
+
+
+### 本章总结
+
+一元运算符
+
+重载中缀运算符，鸭子类型或者isinstance测试
+
+比较运算符
+
+增量赋值运算符
 
