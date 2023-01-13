@@ -160,25 +160,57 @@
 3.10	本章小结
 3.11	延伸阅读
 
+
 第4章：文本和字节序列
 4.1	字符问题
+	decode，encode
+	bytes以'b'开头
 4.2	字节概要
+	bytes或者bytearry对象的各个元素都是0-255之间的数
+	每个字符可能含有1个或者多个字节
+	bytes切片返回的是切片字节，而bytes返回一个元素的话是256以内的整数
+	字节值可能会以三种方式转换
+		可打印ASCII范围的字节，使用字节自身
+		制表符，换行符，回车符和\对应使用转义
+		其他字节的值，使用十六进制转义序列
+	结构体和内存视图
+		struct模块提供一些函数看，把打包的字节序列转换成不同类型字段组成的元组，话有一些函数用于执行反向转换
+			struct.unpack(fmt,header)
+			header是利用memoryview读出的一段值
 4.3	基本的编码器
 4.4	了解解码问题
 	4.4.1	处理UnicodeEncodeError
+		文本转为字节序列时目标编码中没有定义字符，抛出异常
 	4.4.2	处理UnicodeDecodeError
+		二进制转文本时，遇到无法转换的字节，抛出异常
 	4.4.3	使用预期之外的编码加载模块时抛出的SyntaxError
+		python3 默认utf-8
 	4.4.4	如何找出字节序列的编码
+		命令行文件 chardetect 文件名
 	4.4.5	BOM：有用的鬼符
+		UTF-16中的\xff\xfe就是BOM，字节序标记。指明编码时使用IntelCpu的小字节序列
 4.5	处理文本文件
+	三明治法。尽早将输入的二进制文件转为字符串，最后将字符串转为二进制。业务中不要编码和解码
 4.6	为了正确比较而规范化Unicode字符串
+	unicodedata.normalize(参数,str)
+		NFC
+		NFD
+		NFKD
+		NFKC
 	4.6.1	大小写折叠
+		str.casefold() 基本等同于str.lower()
 	4.6.2	规范化文本匹配使用函数
 	4.6.3	极端“规范化”：去掉变音符号
 4.7	Unicode文本排序
+	非ASCII文本的标准排序方式是使用locale.strxfrm函数
+		locale.setlocale设定比较代码
+		locale.strxfrm作为key的比较函数
+	使用pyuca.Collator.sort_key方法
 4.8	Unicode数据库
 4.9	支持字符串和字节序列的双模式API
 	4.9.1	正则表达式中字符串和字节序列
+		字节构成的正则表达式只能匹配ASCII字符
+		字符串模式可以匹配Unicode数字或者字母
 	4.9.2	os函数中的字符串和字节序列
 4.10	本章小结
 4.11	延伸阅读
