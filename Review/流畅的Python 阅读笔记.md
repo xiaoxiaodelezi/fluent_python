@@ -1083,19 +1083,57 @@
 
 ###	第16章：协程
 
+​	协程使用yield关键字，一般出现在表达式右边，可以产出值，也可以不产出
+
+​	协程可以从调用方法接收数据，使用.send(datum)方法，而不是next
+
 ####	16.1	生成器如何进化成协程
 
 ####	16.2	用作协程的生成器的基本行为
 
+​	使用关键字yield
+
+​	如果只从客户那里接受数据，那么yield关键字右侧没有表达式，产出值为None（隐式指定），客户传入值会直接赋给左侧变量
+
+​	调用函数会的生成器对象
+
+​	实现要调用next来激活，停在第一个yield，或者使用send(None)
+
+​	send传值，协程恢复，运行到下一个yield或者终止
+
+​	协程状态通过inspect.getgeneratorstate()来检查，一共四种：
+
+​			GEN_CREATED
+
+​			GEN_RUNNING
+
+​			GEN_SUSPENDED
+
+​			GEN_CLOSED
+
 ####	16.3	示例：使用协程计算移动平均值
+
+​	使用协程的好处是total和count声明为局部变量即可，无需使用实例属性或闭包再多次调用之间保持上下文
 
 ####	16.4	预激协程的装饰器
 
+​	@functools.wraps装饰器构造一个闭包形式的预激，返回预激后的对象
+
 ####	16.5	终止协程和异常处理
+
+​	协程中没有处理的异常会传给next或者send方法
+
+​	generator.throw()可以致使生成器暂停在yield表达式处并抛出指定异常。如果生成器处理了抛出的异常（协程中有try/except流程），代码会向前到下一个yield，产出值为generator.throw方法得到的返回值。如果生成器没有处理异常，异常会上冒，传到调用方的上下文中
+
+​	generator.close()可以致使生成器在暂停的yield表达式处抛出GeneratorExit异常。如果生成器没有处理这个异常，或抛出了StopIteration异常，调用方不会报错。如果收到GeneratorExit异常，生成器一定不能产生值，否则会抛出RuntimeError异常。
 
 ####	16.6	让协程返回值
 
+​	协程最后的return函数会传值给StopIteration异常的一个属性，需要获得可以在except语句中将StopIteration定义为exc，然后通过exc.value获得
+
 ####	16.7	使用yield from
+
+​	用于简化for循环中的yield表达式
 
 ####	16.8	yield from 的意义
 
