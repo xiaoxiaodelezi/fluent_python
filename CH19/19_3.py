@@ -18,3 +18,12 @@ def load():
         return json.load(fp)
 
 
+feed = load()
+print(sorted(feed['Schedule'].keys()))
+for key, value in sorted(feed['Schedule'].items()):
+    print('{:3} {}'.format(len(value), key))
+
+print(feed['Schedule']['speakers'][-1]['name'])
+print(feed['Schedule']['speakers'][-1]['serial'])
+print(feed['Schedule']['events'][40]['name'])
+print(feed['Schedule']['events'][40]['speakers'])
