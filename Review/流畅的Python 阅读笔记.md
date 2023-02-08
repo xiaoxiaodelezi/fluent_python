@@ -6,7 +6,7 @@
 
 #### 	1.1	一摞Python风格的纸牌
 
-​		使用collection中的namedtuuple来构建FrenchDeck
+​		使用collection中的namedtuple来构建FrenchDeck
 
 ​		三个方法：__init__，__getitem__，__len__
 
@@ -43,6 +43,8 @@
 ​			Cpython会直接从一个C结构体里读取对象操作（后门）
 #### 1.5	本章小结
 
+​			collections.namedtuple
+
 #### 1.6	延伸阅读
 
 
@@ -53,7 +55,7 @@
 
 ####	2.1	内置序列类型概览
 
-​	容器序列/扁平序列
+​	容器序列(引用)/扁平序列(值)
 
 ​	可变序列/不可变序列
 
@@ -91,7 +93,7 @@
 
 ​		*args来获取不确定数量的参数	*
 
-​		平行赋值 a,b,*rest,c=range(5)， 0,1,[2,3],4*
+​		平行赋值 a,b,**rest,c=range(5)， 0,1,[2,3],4*
 
 ​	2.3.3	嵌套元组拆包
 
@@ -103,8 +105,8 @@
 
 ​		字段名可以是带空格的字符串，或者由数个字符串组成的可迭代对象
 
-​		._fields_
-​		._make()_
+​		.<u>_</u>fields
+​		.__make()_
 ​		._asdict()
 ​	2.3.5	作为不可变列表的元组
 
@@ -113,9 +115,7 @@
 
 ​	2.4.2	对对象进行切片
 
-​		seq[start:stop:step]
-
-​		调用seq.__getitem__(slice(start,stop,step))
+​		对seq[start:stop:step]求值会调用seq.__getitem__(slice(start,stop,step))
 
 ​	2.4.3	多维切片和省略
 
@@ -175,11 +175,21 @@
 
 ​	2.9.4	双向队列和其他形式的队列
 
-​		双向队列collections.deque(生成器，maxlen参数)
+​		双向队列collections.deque(可迭代对象，maxlen参数)
 
-​			rotate，appendleft，extend，extendleft
+​			rotate，appendleft，extend，extendleft（加入时的顺序要注意）
 
 ####	2.10	本章小结
+
+​				了解filter和map函数
+
+​				collections库
+
+​				bisect库
+
+​				array.array
+
+​				memoryview
 
 ####	2.11	延伸阅读
 
@@ -196,6 +206,8 @@
 ​	可散列的数据类型定义
 
 ​		实现hash方法和eq方法。元组只有在所有元素都是可散列的时候本身才可散列
+
+​		散列值时按照id()的值散列
 
 ####	3.2	字典推导
 ​		{key:value for.....}
@@ -253,7 +265,7 @@
 
 ​		{元素,[元素]}，空集合必须表示为set()
 
-​		frozenset没有特殊字面量句法，必须使用构造方法
+​		frozenset没有特殊字面量句法，必须使用构造方法 frozenset(set)
 
 ​	3.8.2	集合推导
 
@@ -293,6 +305,10 @@
 ​		set和frozenset也是依赖散列表，只有一个值的引用
 
 ####	3.10	本章小结
+
+​				了解fliter函数和map函数
+
+​				array.array
 
 ####	3.11	延伸阅读
 
