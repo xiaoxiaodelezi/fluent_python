@@ -8,32 +8,32 @@
 
 ​		使用collection中的namedtuple来构建FrenchDeck
 
-​		三个方法：__init__，__getitem__，__len__
+​		三个方法：\_\_init\_\_，\_\_getitem\_\_，\_\_len\_\_
 
-​		__getitem__可以实现迭代
+​		\_\_getitem\_\_可以实现迭代
 
-​		__contains__，如果没有，in会遍历
+​		\_\_contains\_\_，如果没有，in会遍历
 
 #### 	1.2	如何使用特殊方法
 
-​			很多时候调用特殊方法是隐式的。比如for...in...就是调用iter(x)，背后则是x.__iter__()
+​			很多时候调用特殊方法是隐式的。比如for...in...就是调用iter(x)，背后则是x.\_\_iter\_\_()
 
 ​			不要随意添加特殊方法
 
 ​				1.2.1	模拟数值类型	
 
-​					__repr__ __abs__  __add__  __mul__ __bool__
+​					\_\_repr\_\_ \_\_abs\_\_  \_\_add\_\_  \_\_mul\_\_ \_\_bool\_\_
 
 ​				1.2.2	字符串表示形式
 
-​					__repr__和__str__的区别
+​					\_\_repr\_\_和\_\_str\_\_的区别
 
 ​				1.2.3	算数运算符
-​					+和*这两个方法通过__add__和__mul__实现
+​					+和*这两个方法通过\_\_add\_\_和\_\_mul\_\_实现
 
 ​				1.2.4	自定义的布尔值
 
-​					bool背后调用__bool__方法，如果不存在会尝试调用__len__()，为0返回False，不然返回True
+​					bool背后调用\_\_bool\_\_方法，如果不存在会尝试调用\_\_len\_\_()，为0返回False，不然返回True
 
 #### 	1.3	特殊方法一览
 
@@ -91,9 +91,9 @@
 
 ​		_ 占位符
 
-​		*args来获取不确定数量的参数	*
+​		*args来获取不确定数量的参数
 
-​		平行赋值 a,b,**rest,c=range(5)， 0,1,[2,3],4*
+​		平行赋值 a,b,\*rest,c=range(5)， #0,1,[2,3],4
 
 ​	2.3.3	嵌套元组拆包
 
@@ -105,9 +105,9 @@
 
 ​		字段名可以是带空格的字符串，或者由数个字符串组成的可迭代对象
 
-​		.<u>_</u>fields
-​		.__make()_
-​		._asdict()
+​		.\_\_fields
+​		.\_\_make()
+​		.\_\_asdict()
 ​	2.3.5	作为不可变列表的元组
 
 ####	2.4	切片
@@ -115,9 +115,11 @@
 
 ​	2.4.2	对对象进行切片
 
-​		对seq[start:stop:step]求值会调用seq.__getitem__(slice(start,stop,step))
+​		对seq[start:stop:step]求值会调用seq.\_\_getitem\_\_(slice(start,stop,step))
 
 ​	2.4.3	多维切片和省略
+
+​		主要针对Numpy这类
 
 ​		Python内置的序列类型都是一维的
 
@@ -127,7 +129,13 @@
 
 ​		如果赋值的对象是一个切片，赋值语句的右侧必须是一个可迭代对象
 
-​		并不一定赋值可迭代对象中的元素个数一样
+​		赋值语句两侧的元素个数不需要一致
+
+```python
+l[2:5]=[100] #必须是一个可迭代对象，不能是100
+```
+
+
 
 ####	2.5	对序列使用+和*
 
@@ -135,13 +143,13 @@
 
 ####	2.6	序列的增量赋值
 
-​	优先__iadd__（用于就地加法，如果没有会选择add方法，这时类似a=a+b（得到新对象，赋值给a）
+​	优先\_\_iadd\_\_（用于就地加法，如果没有会选择add方法，这时类似a=a+b(得到新对象，赋值给a))
 
 ​	不要把可变对象放在元组中，增量赋值不是原子操作
 
 #### 2.7	list.sort方法和内置函数sorted
 
-​	list.sort回在元列表上操作
+​	list.sort会在元列表上操作
 
 ​	sorted会有新的列表返回
 
@@ -151,9 +159,21 @@
 
 ​		参数是一个有序列表和一个值，返回插入位置
 
+```python
+bisect.bisect(a,x,lo=0,hi=len(a),*,key=None) # bisect_right
+bisect.bisect_left
+```
+
 ​	2.8.2	用bisect.insort插入新元素
 
 ​		参数是一个升序列表和一个值，插入后保持升序不变
+
+```python
+bisect.insort
+bisect.insort_left
+```
+
+
 
 #### 2.9	当列表不是首选时
 
@@ -162,6 +182,31 @@
 ​		array.array('类型',生成器)，只包含数字
 
 ​		支持方法：pop，insert，extend，frombytes，tofile
+
+```python
+array.array(typecode,[,initializer])
+
+typecode
+itemsize
+append(x)
+buffer_info()
+byteswap()
+count(x)
+extend(iterable)
+frombytes(s)
+fromfile(f,n)
+fromlist(list)
+fromunicode(s)
+index(x[,start[,stop]])
+tolist()
+tounicode()
+insert(i,x)
+pop([i])
+remove(x)
+reverse()
+tobytes()
+tofile(f)
+```
 
 ​		不再支持list.sort排序，排序需要使用array.array(a.typecode,sorted(a))
 
@@ -221,11 +266,13 @@
 
 ​	3.4.1	defaultdict： 处理找不到的键的一个选择
 
-​		collections.defaultdict(迭代对象)来构建字典
+​		collections.defaultdict(default_factory=None,/[,...])来构建字典
 
-​	3.4.2	特殊方法 __missing__
+​	3.4.2	特殊方法 \_\_missing\_\_
 
-​		missing方法只会被getitem调用
+​		\_\_missing\_\_方法只会被\_\_getitem\_\_调用
+
+​			注意\_\_missing\_\_中可能会遇到的无线递归问题。\_\_missing\_\_一定要有退出机制
 
 ​		自定义映射类的时候适合继承collections.UserDict类
 
@@ -252,6 +299,8 @@
 ####	3.7	不可变映射类型
 
 ​		types.MappingProxyType：镜像一个字典，不能对这个镜像进行任何修改。修改元字典的结果会反馈到这个镜像字典上
+
+​		types.MappingProxyType(mapping)
 
 ####	3.8	集合论
 
@@ -328,7 +377,7 @@
 
 ​	每个字符可能含有1个或者多个字节
 
-​	bytes切片返回的是切片字节，而bytes返回一个元素的话是256以内的整数
+​	bytes[:]返回的是切片字节，而bytes[n]返回一个元素的话是256以内的整数
 
 ​	字节值可能会以三种方式转换
 
@@ -344,7 +393,7 @@
 
 ​			struct.unpack(fmt,header)
 
-​			header是利用memoryview读出的一段值
+​				header是memoryview读出的一段值，fmt是读取的格式，返回解读后的内容
 
 ####	4.3	基本的编码器
 
@@ -598,6 +647,14 @@ triple=partial(mul,3) #将mul的第一个参数固定为3
 
 ​	6.1.4	找出模块中的全部策略
 
+```python
+globals()[name] #返回当前的全局符号，通过name来找到对应方法
+
+inspect.getmembers(模块名,inspect.isfunction) #查看模块中所有的函数对象
+```
+
+
+
 ####	6.2	“命令”模式
 ####	6.3	本章小结
 
@@ -617,6 +674,8 @@ triple=partial(mul,3) #将mul的第一个参数固定为3
 
 ​	装饰器在被装饰的函数定义之后立刻执行，通常是在导入时（加载模块时）
 
+​		利用这个特性，可以生成一个函数列表在最初的时候装入所有被装饰器修饰过的函数
+
 ​	被装饰的函数只在调用时才执行
 
 ####	7.3	使用装饰器改进“策略”模式
@@ -625,17 +684,39 @@ triple=partial(mul,3) #将mul的第一个参数固定为3
 
 ​	Python不要求声明变量，但是假定在函数定义体中赋值的变量是局部变量
 
+```python
+b=6
+def f(a):
+    print(a)
+    print(b)
+    b=9
+f(2) #报错  b在f中又被定义了，而且还在print函数后
+
+```
+
 ####	7.5	闭包
 
 ​	闭包指延伸了作用域的函数，其中包含函数定义体中引用、但是补在定义体中定义的非全局变量。
 
+​	闭包对于使用函数外的变量要注意类型。如果是不可变类型要特别注意自加之类的处理。
+
 ####	7.6	nonlocal声明
 
-​	把变量标记为自由变量，即使在函数中为变量赋予新值，也会变成自由变量
+​	把变量标记为自由变量，即使在函数中为变量赋予新值，也会变成自由变量。如果已经是自由变量，会更新值。\_\_code\_\_.co_freevars中有自由变量名称，值绑定在\_\_closure\_\_中。
 
 ####	7.7	实现一个简单的装饰器
 
 ​	functools.wraps装饰器可以把相关的属性从func复制到clocked中
+
+```python
+def clock(func):
+    @functools.wraps(func)
+    def clocked(*args,**kwargs): #*args,**kwargs是func的参数，被wraps打包进来
+        '''contents'''
+    return clocked
+```
+
+
 
 ####	7.8	标准库中的装饰器
 
@@ -647,9 +728,22 @@ triple=partial(mul,3) #将mul的第一个参数固定为3
 
 ​	7.8.2	单分派泛函数
 
+​		泛函数：函数对不同类型的参数会提供不同的处理方式；通过装饰器实现；类似重载机制
+
+​		单分派：根据函数的第一个参数不同来调用具体的执行方式
+
 ​		可以把多个函数绑在一起组成一个泛函数
 
 ####	7.9	叠放装饰器
+
+```python
+@d1
+@d2
+def func():
+    pass
+
+d1(d2(func))
+```
 
 ####	7.10	参数化装饰器
 
@@ -657,7 +751,24 @@ triple=partial(mul,3) #将mul的第一个参数固定为3
 
 ​		两层函数，最外层带参数，第二层是真正的装饰器
 
+```python
+def register(active=True):
+    def decorate(func): #真正的包装器
+        def clocked(*_args): #具体包装的处理
+            '''content'''
+        return clocked
+    return decorate
+```
+
 ​	7.10.2	参数化clock装饰器
+
+```python
+@register(active=False)
+def func():
+    pass
+```
+
+
 
 
 
