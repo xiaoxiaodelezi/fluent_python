@@ -445,9 +445,9 @@
 
 ​	接受函数为参数，或者把函数作为结果返回的函数是高阶函数
 
-​	map，fliter和functools.reduce三个函数
+​	map，fliter两个个函数（这两个函数返回生成器，可以用生成器替代）
 
-​	all，any两个归约函数
+​	all，any，functools.reduce三个归约函数
 
 ####	5.3	匿名函数
 
@@ -479,30 +479,73 @@
 
 ####	5.5	用户定义的可调用类型
 
-​	任何python对象都可以通过实现__call__方法来实现实例调用
+​	任何python对象都可以通过实现\_\_call\_\_方法来实现实例调用
 
 ####	5.6	函数内省
 
 ​	使用dir函数可以探知函数属性
 
+​	函数较之其他对象所特有的属性
+
+​		\_\_annotations\_\_	注释
+
+​		\_\_call\_\_	调用
+
+​		\_\_closure\_\_	绑定的自由变量
+
+​		\_\_defaults\_\_	形式参数的默认值
+
+​		\_\_get\_\_	实现只读描述符的协议
+
+​		\_\_globals\_\_	函数所在模块的全局变量
+
+​		\_\_kwdefaults\_\_	仅限关键字默认值
+
+​		\_\_name\_\_	函数名称
+
+​		\_\_qualname\_\_	限定名称
+
+```python
+func.__code__.co_varnames #func的参数名和func中的局部变量
+func.__code__.co_argcount #func的参数数量
+```
+
+
+
 ####	5.7	从定位参数到仅限关键字参数
 
-​	定义函数时若想指定仅限关键字参数，要把它们放到前面有**的*参数后面。
+​	定义函数时若想指定仅限关键字参数，要把它们放到前面有\*的参数后面。
 
 ​	如果不想支持数量不定的定位参数，但想支持仅限关键字参数，在签名中放一个*
 
+​	func(参数1，参数2，*content，关键字1，关键字2，**可变参数)
+
 ####	5.8	获取关于参数的信息
 
-​	函数的—__defaults__属性保存定位参数和关键字参数的默认值
+​	函数的\_\_defaults__属性保存定位参数和关键字参数的默认值
 
-​	仅限关键字参数的默认值在__kwdefaults__中
+​	仅限关键字参数的默认值在\_\_kwdefaults\_\_中
 
 ​	inspect.signature()探查属性
 
 ​	bind把一个个参绑定到签名中的形参上
 
+```python
+sig=inspect.signature(func)
+sig.parameters.items() #获取func的所有属性
+sig.bind(**args)#将属性绑定到func中
+```
+
+
+
 ####	5.9	函数注解
-​	可以在各个参数的：之后增加注解表达式，放在参数名和=号之间。
+​	可以在各个参数的：之后增加注解表达式，放在参数名和=号之间。存储在\_\_annotations\_\_中
+
+```python
+def clip(text:str, max_len:'int > 0'=80) ->str:
+```
+
+
 
 ####	5.10	支持函数式编程的包
 
@@ -514,9 +557,26 @@
 
 ​		operator.methodcaller
 
+```python
+f=attrgetter('name')
+f(b) #返回b.name
+
+f=itemgetter(2)
+f(b)#返回b[2]
+
+f=methodcaller('name')
+f(b) #相当于b.name()
+```
+
+
+
 ​	5.10.2	使用functools.partial冻结参数
 
 ​		基于一个函数创建一个新的调用对象，把原函数的某些参数固定
+
+```python
+triple=partial(mul,3) #将mul的第一个参数固定为3
+```
 
 ####	5.11	本章小结
 ####	5.12	延伸阅读
