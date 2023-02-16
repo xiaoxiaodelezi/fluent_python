@@ -1085,7 +1085,7 @@ print(c)
 
 ​	抽象基类也可以包含具体方法
 
-​	抽象方法可以有实现代码，但子类还是必须要覆盖抽象方法，但是子类可以使用super()函数调用抽象方法，为它添加功能，而不是从头开始
+​	抽象方法可以有实现代码，但子类还是必须要覆盖抽象方法，不过子类可以使用super()函数调用抽象方法，为它添加功能，而不是从头开始
 
 ​	检查在实例创建时进行
 
@@ -1095,6 +1095,101 @@ print(c)
 
 ​		@abstractmethod装饰器
 
+```python
+#声明一个接口类继承于一个基类
+
+#1:接口Drawable中没有抽象方法，可以被实例化
+class Drawable(metaclass=ABCMeta):
+
+    # @abstractmethod
+    def size(self):
+        return 'Drawable size'
+
+    # @abstractmethod
+    def draw(self, x, y, scale=1.0):
+        pass
+
+    def double_draw(self, x, y):
+        self.draw(x, y, scale=2.0)
+
+d=Drawable()
+
+
+#2：接口Drawable中有抽象方法，实例化会报错
+class Drawable(metaclass=ABCMeta):
+
+    @abstractmethod
+    def size(self):
+        return 'Drawable size'
+
+    # @abstractmethod
+    def draw(self, x, y, scale=1.0):
+        pass
+
+    def double_draw(self, x, y):
+        self.draw(x, y, scale=2.0)
+
+d=Drawable()#会报错
+
+#3：继承一个没有抽象方法的接口，不需要覆写实例方法
+class Drawable(metaclass=ABCMeta):
+
+    # @abstractmethod
+    def size(self):
+        return 'Drawable size'
+
+    # @abstractmethod
+    def draw(self, x, y, scale=1.0):
+        pass
+
+    def double_draw(self, x, y):
+        self.draw(x, y, scale=2.0)
+
+
+class Cicle(Drawable):
+    # def size(self):
+    #     return 'Cicle size'
+
+    # def draw(self, x, y, scale=1.0):
+    #     print(x * scale, y * scale)
+    def paint(self):
+        pass
+
+
+c=Cicle()
+
+
+#4：继承一个有抽象方法的接口类需要覆写抽象方法
+from abc import ABCMeta, abstractmethod
+
+
+class Drawable(metaclass=ABCMeta):
+
+    @abstractmethod
+    def size(self):
+        return 'Drawable size'
+
+    # @abstractmethod
+    def draw(self, x, y, scale=1.0):
+        pass
+
+    def double_draw(self, x, y):
+        self.draw(x, y, scale=2.0)
+
+
+class Cicle(Drawable):=====》继承但没有实现抽象方法
+
+    def paint(self):
+        pass
+
+c=Cicle() #会报错
+
+##总结
+#接口类(抽象类)->类(接口类)->接口类有抽象方法，类需要覆写；没有接口类不需要覆写
+```
+
+​	
+
 ​	11.7.2	定义Tombola抽象基类的子类
 
 ​		需要所有必要方法和可以自己添加新的方法
@@ -1103,11 +1198,24 @@ print(c)
 
 ​		白鹅类型的一个基本特征是即使不继承，也有办法把一个类注册为抽象基类的虚拟子类，python不会检查，有问题会在运行时体现
 
+​		虚拟子类保证了我们在写这个类的时候完全符合其父类的所有接口要求
+
 ​		在声明类前加@类.register
 
-​		类的继承关系在一个特殊的类属性中指定mro，即方法解析顺序，按顺序列出其超类，虚拟子类只会列出“真实”的超类，不包含虚拟的超类
+```python
+@Tombola.register
+class TomboList(list)
+
+#ToboList是Tombola的虚拟子类，同时扩展list
+```
+
+​		类的继承关系在一个特殊的类属性中指定\_\_mro\_\_，即方法解析顺序，按顺序列出其超类，虚拟子类只会列出“真实”的超类，不包含虚拟的超类
 
 ####	11.8	Tombola子类的测试方式
+
+​	\_\_subclasses\_\_()返回类的直接子类列表，不包含虚拟子类
+
+​	\_\_abc_registry，一个weakset对象，只有抽象基类才有这个数据属性，是抽象基类注册的虚拟子类的弱引用
 
 ####	11.9	Python使用register的方式
 
@@ -1115,11 +1223,25 @@ print(c)
 
 ​	类.register(虚拟子类)
 
+```python
+Tombola.register(Tombolist)
+```
+
 ####	11.10	鹅的行为有可能像鸭子
 
 ​	由于有subclass的存在，可以使得某些鹅有鸭子的样子。不需要显式注册，只需要实现某些方法，就会使某些抽象基类的子类
 
+​	\_\_issubclass__(子类,父类)
+
+​	\_\_isinstance\_\_(子类,父类)
+
 ####	11.11	本章小结
+
+​	鸭子类型和白鹅类型的区别
+
+​	鸭子类型：协议、接口、对象三者没有区别。协议风格的接口与继承完全没有关系，实现同一个协议的各个类相互独立。
+
+​	白俄类型：使用抽象基类明确声明接口，而且类可以子类化抽象基类或使用抽象基类注册（无需在继承关系中确立静态的强链接），宣称它实现了某个接口。
 
 ####	11.12	延伸阅读
 
@@ -1129,17 +1251,32 @@ print(c)
 
 ####	12.1	子类化内置类型很麻烦
 
-​	内置类型是用C语言编写的，子类不会调用用户定义的类覆盖方法
+​	内置类型是用C语言编写的，子类不会调用用户定义的类覆盖内置类型的一些方法。
 
-​	用户自己定义的类应该继承collections模块中的类，比如UserDict，UserList和UserString
+​		比如dict的\_\_init\_\_和\_\_update\_\_方法会覆盖我们在子类中重新覆写的\_\_setitem\_\_方法
+
+​	不要子类化内置类型，用户自己定义的类应该继承collections模块中的类，比如UserDict，UserList和UserString
 
 ####	12.2	多重继承和方法解析顺序
 
-​	菱形问题，Python会按照解析顺序来调用。mro属性是个元组，从当前类向上。
+​	菱形问题，Python会按照解析顺序来调用。\_\_mro\_\_属性是个元组，从当前类向上。
 
 ​	超类中的方法可以直接调用，只需要把实例作为显式参数传入
 
+```python
+#D的实例d调用超类C的方法
+C.pong(d)
+```
+
 ​	直接在类上调用实例方法时必须显式传入self
+
+```python
+#D.ping方法
+def ping(self):
+    A.ping(self) #不是super().ping()
+    
+#super也可以使用，但是要注意级数
+```
 
 ####	12.3	多重继承的真实运用
 
@@ -1165,29 +1302,47 @@ print(c)
 
 ####	13.2	一元运算符
 
-​	neg
+​	\_\_neg\_\_
 
-​	pos
+​	\_\_pos\_\_
 
-​	invert
+​	\_\_invert\_\_
 
-​	x和+x何时不相等
+​	x和+x何时不相等（由于精度换算导致的不相同）
 
 ####	13.3	重载向量加法运算符+
 
-​	add 和 radd的关系
+​	\_\_add\_\_ 和 \_\_radd\_\_的关系
+
+​	a+b
+
+​		1：a有\_\_add\_\_，返回的值不是None或者NotImplement，调用\_\_add\_\_
+
+​		2：a没有\_\_add\_\_，或者返回值是None或NotImplement，检查b有没有\_\_radd\_\_，如果有，并且返回不是None或者NotImplement，调用b.\_\_radd\_\_(a)
+
+​		3：如果b没有\_\_radd\_\_或者返回None或NotImplement，抛出TypeError	
+
+​	\_\_radd\_\_的通常定义为委托给\_\_add\_\_
 
 ####	13.4	重载标量乘法运算符*
 
-​	mul 和 rmul
+​	\_\_mul\_\_ 和 \_\_rmul\_\_
+
+​	中缀运算符@，代表a和b的点积
+
+​		\_\_matmul\_\_，\_\_rmatmul\_\_和\_\_imatmul\_\_
 
 #### 13.5	众多比较运算符
 
-​	eq，ne，gt，lt，ge，le
+​	\_\_eq\_\_，\_\_ne\_\_，\_\_gt\_\_，\_\_lt\_\_，\_\_ge\_\_，\_\_le\_\_
 
 ####	13.6	增量赋值运算符
 
-​	iadd
+​	增量赋值不会修改不可变目标，而是新建实例，然后重新绑定
+
+​	\_\_iadd\_\_
+
+​	一个类没有实现\_\_iadd\_\_就地运算符，a+=b的作用和a=a+b，增量运算符只是一个语法糖。只需要有\_\_add\_\_方法，不用额外编写\_\_iadd\_\_，+=就能使用
 
 ####	13.7 本章小结
 
@@ -1205,21 +1360,31 @@ print(c)
 
 ####	14.1	Sentence类第1版：单词序列
 
-​	序列可以迭代的原因：先检查对象有没有iter方法，有就调用，获得一个迭代器。没有的话如果实现了getitem方法，Python会创建一个迭代器，尝试从0开始索引获取元素。如果尝试失败，抛出TypeError异常。
+​	序列可以迭代的原因：先检查对象有没有\_\_iter\_\_方法，有就调用，获得一个迭代器。没有的话如果实现了\_\_getitem\_\_方法，Python会创建一个迭代器，尝试从0开始索引获取元素。如果尝试失败，抛出TypeError异常。
+
+​	检查x是否可以迭代使用iter(x)，抛出TypeError表示不可迭代
 
 ####	14.2	可迭代的对象与迭代器的对比
 
-​	使用iter内置函数可以获取迭代器的对象。如果对象实现了iter方法，那么就是可迭代的。实现getitem方法，并且器参数是从0开始的，那么也是可迭代的
+​	使用\_\_iter\_\_内置函数可以获取迭代器的对象。如果对象实现了\_\_iter\_\_方法，那么就是可迭代的。实现\_\_getitem\_\_方法，并且参数是从0开始的，那么也是可迭代的
 
 ​	Python可以从可迭代对象中获取迭代器
 
 ​	使用next函数获取下个元素
 
-​	迭代器只有next和iter两个方法，没有办法还原
+```python
+s='abc'
+it=iter(s)
+next(it)
+```
+
+
+
+​	迭代器只需要实现\_\_next\_\_和\_\_iter\_\_两个方法，调用next后没有办法还原
 
 ####	14.3	Sentence类第2版：典型的迭代器
 
-​	可迭代对象一定不能是自身的迭代器，也就是可迭代对象必须实现iter方法，但不能实现next方法
+​	可迭代对象一定不能是自身的迭代器，也就是可迭代对象必须实现\_\_iter\_\_方法，但不能实现\_\_next\_\_方法
 
 ####	14.4	Sentence类第3版：生成器函数
 
@@ -1229,7 +1394,15 @@ print(c)
 
 ####	14.5	Sentence类第4版：惰性实现
 
-​	yield后的语句也是一个生成器，每次调用出一个结果
+​	在\_\_iter\_\_函数的for循环中使用yield来控制for循环的输出
+
+```python
+def __iter__(self):
+    for match in iter:
+        yield match
+```
+
+
 
 ####	14.6	Sentence类第5版：	生成器表达式
 
@@ -1245,21 +1418,43 @@ print(c)
 
 ####	14.10	Python3.3 中出现的新句法：yield from
 
+​	yield from有两个使用方式，一个用于协程，还有一个用于代替内侧循环
+
+```python
+for iter in iters:
+    for it in iter:
+        yield it
+        
+#等同于
+for iter in iters:
+    yield from iter
+```
+
 ​	用于生成器函数需要产出另一个生成器生成的值
 
 ####	14.11	可迭代的归约函数
 
-​	all，any，max， min，reduce，sum
+​	all，any，max， min，functools.reduce，sum
 
 ####	14.12	深入分析iter函数
 
 ​	iter有两个参数，可调用对象和哨符。在调用到哨符时抛出stopiteration异常（不产生哨符）
 
+```python
+iter(对象，哨符)
+```
+
+
+
 ####	14.13	案例分析：在数据库转换工具中使用生成器
 
 ####	14.14	把生成器当成协程
 
-​	send方法
+​	.send() 和 \_\_next\_\_的区别
+
+​	.send()可以使得生成器前进到下一个yield语句，还允许使用生成器的客户把数据发给自己，参数会成为函数定义题中yield表达式的值。
+
+​	\_\_next\_\_()方法只允许客户从生成器中提取数据
 
 ####	14.15	本章小结
 
@@ -1283,15 +1478,17 @@ print(c)
 
 ​	with语句的目的是简化try/finally模式。
 
-​	上下文管理器协议包含enter和exit。with开始时会在上下文管理器对象中调用enter方法，结束会调用exit方法
+​	上下文管理器协议包含\_\_enter\_\_和\_\_exit\_\_。with开始时会在上下文管理器对象中调用\_\_enter\_\_方法，结束会调用\_\_exit\_\_方法
 
-​	with后面的表达式得到的结果时上下文管理对象，把值绑定到目标变量上（as子句）是在上下文管理器对象上调用enter的结果
+​	with后面的表达式得到的结果时上下文管理对象，把值绑定到目标变量上（as子句）是在上下文管理器对象上调用\_\_enter\_\_的结果。
 
-​	不管控制流程以哪种方式退出with块，都会在上下文管理器对象上调用exit方法，而不是在enter方法返回的对象上调用
+​	with模块和函数不同，没有定义新的作用域
 
-​	exit(self,exc_type,exc_value,traceback) 正常情况下python调用exit方法时传入的是3个none
+​	不管控制流程以哪种方式退出with块，都会在上下文管理器对象上调用\_\_exit\_\_方法，而不是在\_\_enter\_\_方法返回的对象上调用
 
-​	为了告诉解释器异常已经处理，exit方法需要return True
+​	\_\_exit\_\_(self,exc_type,exc_value,traceback) 异常类型、异常值、trackback对象异常位置。正常情况下python调用\_\_exit\_\_方法时传入的是3个none
+
+​	为了告诉解释器异常已经处理，\_\_exit\_\_方法需要return True
 
 ####	15.3	contextlib模块中的实用工具
 
@@ -1309,9 +1506,11 @@ print(c)
 
 ####	15.4	使用@contextmanager
 
-​	在使用@contextmanager装饰器的生成器中，yield语句的作用是把函数的定义体分成两部分：yield语句前面的所有代码在with块开始时（即解释器调用enter方法时）执行，yield语句后面部分的代码在with块结束时（即调用exit方法时）执行
+​	在使用@contextlib.contextmanager装饰器的生成器中，yield语句的作用是把函数的定义体分成两部分：yield语句前面的所有代码在with块开始时（即解释器调用\_\_enter\_\_方法时）执行，yield语句后面部分的代码在with块结束时（即调用exit方法时）执行
 
-​	@contextmanager默认所有的异常都得到了处理，应该压制异常。如果不想压制，需要显式重新抛出异常
+​	在这个装饰器装饰的函数中，yield没有任何迭代作用
+
+​	@contextmanager默认所有的异常都得到了处理，应该压制异常。如果不想压制，需要显式重新抛出异常。这个和\_\_exit\_\_机制相反
 
 ####	15.5	本章小结
 
@@ -1327,15 +1526,25 @@ print(c)
 
 ####	16.1	生成器如何进化成协程
 
+​	生成器可以结合.send()使用，发送的数据会成为生成器函数中yield表达式的值，所以生成器也可以作为协程使用
+
 ####	16.2	用作协程的生成器的基本行为
 
 ​	使用关键字yield
 
 ​	如果只从客户那里接受数据，那么yield关键字右侧没有表达式，产出值为None（隐式指定），客户传入值会直接赋给左侧变量
 
+```python
+s=yield
+#.send()传入的值会传给s
+#yield的返回值是None
+```
+
 ​	调用函数会的生成器对象
 
 ​	实现要调用next来激活，停在第一个yield，或者使用send(None)
+
+​	使用.send传值激活协程时，不能传None以外的值，会导致错误
 
 ​	send传值，协程恢复，运行到下一个yield或者终止
 
@@ -1345,7 +1554,7 @@ print(c)
 
 ​			GEN_RUNNING
 
-​			GEN_SUSPENDED
+​			GEN_SUSPENDED #协程只有处于这个状态时才能.send()
 
 ​			GEN_CLOSED
 
@@ -1353,27 +1562,106 @@ print(c)
 
 ​	使用协程的好处是total和count声明为局部变量即可，无需使用实例属性或闭包再多次调用之间保持上下文
 
+​	.close()可以关闭协程
+
 ####	16.4	预激协程的装饰器
 
 ​	@functools.wraps装饰器构造一个闭包形式的预激，返回预激后的对象
 
+```python
+from functools import wraps
+
+def coroutine(func):
+   	@wraps(func)
+    def primer(*args,**kwargs):
+        gen=func(*args,**kwargs)
+        next(gen)
+        return gen
+   	return primer
+```
+
+
+
 ####	16.5	终止协程和异常处理
 
-​	协程中没有处理的异常会传给next或者send方法
+​	协程中没有处理的异常会传给next或者send方法（触发协程的对象）
 
-​	generator.throw()可以致使生成器暂停在yield表达式处并抛出指定异常。如果生成器处理了抛出的异常（协程中有try/except流程），代码会向前到下一个yield，产出值为generator.throw方法得到的返回值。如果生成器没有处理异常，异常会上冒，传到调用方的上下文中
+​	generator.throw(exc.type[,exc_value[,trackback]])可以致使生成器暂停在yield表达式处并抛出指定异常。如果生成器处理了抛出的异常（协程中有try/except流程），代码会向前到下一个yield，产出值为generator.throw方法得到的返回值。如果生成器没有处理异常，异常会上冒，传到调用方的上下文中
+
+​	有错误的协程会终止，重新激活再发送值会返回stopiteration。利用这个特性可以使用向协程发送一个哨符，导致错误来终止协程
 
 ​	generator.close()可以致使生成器在暂停的yield表达式处抛出GeneratorExit异常。如果生成器没有处理这个异常，或抛出了StopIteration异常，调用方不会报错。如果收到GeneratorExit异常，生成器一定不能产生值，否则会抛出RuntimeError异常。
 
 ####	16.6	让协程返回值
 
+​	协程的返回值需要协程正常终止
+
 ​	协程最后的return函数会传值给StopIteration异常的一个属性，需要获得可以在except语句中将StopIteration定义为exc，然后通过exc.value获得
+
+```python
+#协程中使用return来返回值
+
+try:
+    coro_avg.send(None)
+except StopIteration as exc:
+    result=exc.value #接受return的值
+```
 
 ####	16.7	使用yield from
 
 ​	用于简化for循环中的yield表达式
 
+​	在生成器gen()中使用yield from subgen()将会使得subgen获得控制权，把产出得值传给gen得调用方，即调用方可以直接控制subgen。同时
+
+```python
+from cllections import namedtuple
+
+Result=namedtuple('Result','count average')
+
+#子生成器
+def averager():
+    total=0.0
+    count = 0
+    average=None
+    while True:
+        term =yield
+        if term is None:
+            break
+        total+=term
+        count+=1
+        average=total/count
+    return Result(count,average)
+
+#委派生成器：本质是将子生成器包裹起来，通过yield from 来调用，这样会有不少优势
+def grouper(result,key):
+    while True:
+        results[key] = yield from averager()
+        
+#客户端代码，即调用方
+def main(data):
+    results={}
+    for key, values in data.items():
+        group=grouper(result,key)
+        next(group)
+        for value in values:
+            group.send(value)#传入得值会通过averager中的term=yield这行，grouper不知道传什么值
+        group.send(None)
+	print(results)
+```
+
+
+
 ####	16.8	yield from 的意义
+
+​	子生成器产出的值都直接传给委派生成器的调用方
+
+​	使用send()方法发给委派生成器的值直接传给了子生成器。如果发送的值是None，会那么会调用子生成器的\_\_next\_\_方法。如果发送的值不是None，那么会调用子生成器的send方法。如果调用的方法抛出StopIteration异常，那么委派生成器恢复运行。任何其他异常都会上冒，传给委派生成器。
+
+​	生成器退出时，生成器（或子生成器）中的return expr表达式会出发StopIteration（expr）异常
+
+​	yield from表达式的值是子生成器终止时传给StopIteration异常的第一个参数
+
+​	参考：[python协程系列（三）——yield from原理详解_LoveMIss-Y的博客-CSDN博客](https://blog.csdn.net/qq_27825451/article/details/85244237)
 
 ####	16.9	使用案例：使用协程做离散事件仿真
 
