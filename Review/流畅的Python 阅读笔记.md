@@ -1683,6 +1683,26 @@ def main(data):
 
 ​	17.1.2	使用concurrent.futures模块下载
 
+```python
+from concurrent import futures
+MAX_WORKERS=20
+
+def download_one(cc):
+    image=get_flag(cc)
+    show(cc)
+    save_flage(image,cc.lower()+'.gif')
+    return cc
+
+def download_many(cc_list):
+    workers=min(MAX_WORKERS,len(cc_list))
+    with futures.ThreadPoolExecutor(workers) as executor:
+        res=executor.map(download_one,sorted(cc_list))
+        
+    return len(list(res))
+```
+
+
+
 ​	17.1.3	future在哪里
 
 ####	17.2	阻塞型I/O和GIL
@@ -1690,6 +1710,12 @@ def main(data):
 ####	17.3	使用concurrent.futures模块启动进程
 
 #### 17.4	实验Executor.map方法
+
+​	futures.ThreadPoolExecutor(wokers) as executor:
+
+​	futures.ProcessPoolExecutor() as executor:
+
+​	Executor.map返回结果的顺序和调用顺序一致。即使后面的任务先完成了，也会在前面的任务返回后再返回，只是计算会被提前。如果需要先出结果就先返回，使用executor.submit 和 futures.as_completed这个组合。
 
 ####	17.5	显式下载进度并处理错误
 
@@ -1706,6 +1732,12 @@ def main(data):
 
 
 ###	第18章：使用asyncio包处理并发
+
+​	threading包提供线程相关支持
+
+​	threading.Thread
+
+​	Python没有提供终止线程的API，若想关闭线程，必须给线程发送消息
 
 ####	18.1	线程与协程对比
 
@@ -1736,6 +1768,106 @@ def main(data):
 ####	18.7	本章小结
 
 ####	18.8	延伸阅读
+
+
+
+## 第六部分：元编程
+
+### 第19章：动态属性和特性
+
+####	19.1	使用动态属性转换数据
+
+​	19.1.1	使用动态属性访问JSON类数据
+
+​	19.1.2	处理无效属性名
+
+​	19.1.3	使用\_\_new\_\_方法以灵活的方式创建对象
+
+​	19.1.4	使用shelve模块调整OSCON数据源的结构
+
+​	19.1.5	使用特性获取链接的记录
+
+####	19.2	使用特性验证属性
+
+​	19.2.1	LineItem类第1版：表示订单中商品的类
+
+​	19.2.2	LineItem类第2版：能验证值的特性
+
+####	19.3	特性全解析
+
+​	19.3.1	特性会覆盖实例属性
+
+​	19.3.2	特性的文档
+
+####	19.4	定义一个特性工厂函数
+
+####	19.5	处理属性删除的操作
+
+####	19.6	处理属性的重要属性和函数
+
+​	19.6.1	影响属性处理方式特殊属性
+
+​	19.6.2	处理属性的内置函数
+
+​	19.6.3	处理属性的特殊方式
+
+####	19.7	本章小结
+
+####	19.8	延伸阅读
+
+
+
+###	第20章：属性描述符
+
+####	20.1	描述符示例：验证属性
+
+​	20.1.1	LineItem类第3版：一个简单的描述符
+
+​	20.1.2	LineItem类第4版：自动获取储存属性的名称
+
+​	20.1.3	LineItem类第5版：一种新型描述符
+
+####	20.2	覆盖型与非覆盖型描述符对比
+
+​	20.2.1	覆盖型描述符
+
+​	20.2.2	没有\_\_get\_\_方法的覆盖型描述符
+
+​	20.2.3	非覆盖型描述符
+
+​	20.2.4	在类中覆盖描述符
+
+####	20.3	方法是描述符
+
+####	20.4 描述符用法建议
+
+####	20.5	描述符的文档字符串和覆盖删除操作
+
+####	20.6	本章小结
+
+####	20.7	延伸阅读
+
+
+
+###	第21章：类元编程
+
+####	21.1	类工厂函数
+
+####	21.2	定制描述符的类装饰器
+
+####	21.3	导入时和运行时的比较
+
+####	21.4	元类基础知识
+
+####	21.5	定制描述符的元类
+
+####	21.6	元类的特殊方法\_\_prepare\_\_
+
+####	21.7	类作为对象
+
+####	21.8	本章小结
+
+####	21.9	延伸阅读
 
 
 
