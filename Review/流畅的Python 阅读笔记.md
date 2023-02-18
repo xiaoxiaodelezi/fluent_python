@@ -1775,13 +1775,61 @@ def download_many(cc_list):
 
 ### 第19章：动态属性和特性
 
+在Python中，数据的属性和处理数据的方法统称属性（attribute）。其实，方法只是可调用的属性。除了这两者之外，我们还可以创建特性（property），在不改变类接口的前提下，使用存取方法（即读值方法和设值方法）修改数据属性。
+
+Python解释器会调用特殊的方法（如\_\_getattr\_\_和\_\_setter\_\_）计算属性。用户自定义的类可以通过\_\_getattr\_\_方法实现“虚拟属性”，当访问不存在的属性时（如obj.no_such_attribut），即时计算属性的值。
+
 ####	19.1	使用动态属性转换数据
 
 ​	19.1.1	使用动态属性访问JSON类数据
 
+​		将访问字典或者列表的[key]方法变为.方法调用
+
+```python
+from collections import abc
+
+class FrozenJSON:
+    
+    def __init__(self,mapping):
+        self.__data=dict(mapping)
+        
+    def __getattr__(self,name): #找不到属性时会调用这个方法
+        if hasattr(self.__data,name):
+            return getattr(self.__data,name)
+        else:
+            return FrozenJSON.build(self.__data[name])
+        
+    @classmethod
+    def build(cls,obj):
+        if isinstance(obj,abc.Mapping):
+            return cls(obj)
+        elif isinstance(obj,abc.MutableSequence):
+            return [cls.build(item) for item in obj]
+        else:
+            return obj
+```
+
 ​	19.1.2	处理无效属性名
 
+​		遇到key是python关键字的时候自动改名
+
+```python
+keyword.iskeyword(key)
+```
+
 ​	19.1.3	使用\_\_new\_\_方法以灵活的方式创建对象
+
+​		\_\_init\_\_并不是创建实例的实质方法，创建实例的是类函数\_\_new\_\_（不需要@classmethod），创建完成后作为self传给\_\_init\_\_，然后再开始\_\_init\_\_中的初始化。所以\_\_init\_\_方法要传入实例，而且禁止返回任何值。
+
+​		也可以直接使用\_\_new\_\_方法
+
+```python
+def object_maker(the_class,some_arg):
+    new_object=the_class.__new__(some_arg)
+    if isinstance(new_object,the_class):
+        the_class.__init__(new_object,some_arg)
+    return new_object
+```
 
 ​	19.1.4	使用shelve模块调整OSCON数据源的结构
 
