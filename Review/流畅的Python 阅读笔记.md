@@ -1833,6 +1833,13 @@ def object_maker(the_class,some_arg):
 
 ​	19.1.4	使用shelve模块调整OSCON数据源的结构
 
+​		[shelve模块](https://docs.python.org/zh-cn/3/library/shelve.html)
+
+```python
+```
+
+
+
 ​	19.1.5	使用特性获取链接的记录
 
 ####	19.2	使用特性验证属性
