@@ -1836,9 +1836,11 @@ def object_maker(the_class,some_arg):
 ​		[shelve模块](https://docs.python.org/zh-cn/3/library/shelve.html)
 
 ```python
+#如果没有__slots__属性，可以使用这个方法更新实例的__dict__属性
+class Record:
+    def __init__(self,**kwargs):
+        self.__dict__.update(kwargs)
 ```
-
-
 
 ​	19.1.5	使用特性获取链接的记录
 
@@ -1848,23 +1850,211 @@ def object_maker(the_class,some_arg):
 
 ​	19.2.2	LineItem类第2版：能验证值的特性
 
+```python
+class LineItem:
+    def __init__(self,description,weight,price):
+        self.description=description
+        self.weight=weight
+        self.price=price
+    
+    @property
+    def weight(self): #调用实例.weight
+        return self.__weight
+    
+    @weight.setter
+    def weight(self,value): #调用实例.weight=value setter在赋值时调用
+        self.__weight=value
+```
+
+
+
 ####	19.3	特性全解析
+
+​	内置的properth虽然作为装饰器，但其实是一个类
+
+```python
+property(fget=None,fset=None,fdel=None,doc=None)
+```
+
+```python
+def get_weight(self):
+    pass
+def set_weight(self,value):
+    pass
+weight=property(get_weight,set_weight) #weight是函数名
+```
 
 ​	19.3.1	特性会覆盖实例属性
 
+```python
+class Class:
+    data = 'the class data attr'
+    @property
+    def prop(self):
+        return 'the prop value'
+
+#给实例添加和类同名的属性后，实例的属性会覆盖类属性，不过类属性本身没有变化
+obj=Class()
+
+print(vars(obj))  #实例没有任何属性，返回空的{}
+print(obj.data) #data不存在在obj中，向上搜索，找到类的data，返回类的data值the class data attr
+
+obj.data='bar' #为obj创建了data属性
+print(vars(obj)) #obj现在有个属性data，值为bar
+
+print(Class.data)#类属性不会更改，依旧是the class data attr
+
+print(obj.data)#bar  因为已经有了data属性
+print(obj.prop)#the prop value 调用了obj.prop
+Class.prop.getter(obj) #通过传入实例调用Class中定义的prop
+
+
+
+#实例属性不会遮挡类特性，除非销毁类特性，注意是“特性”
+#obj.prop='foo' #尝试设置prop实例的属性会导致错误
+
+obj.__dict__['prop']='foo' #可以将prop属性直接添加到obj的__dict__属性中
+print(vars(obj)) #obj的属性中有了prop
+print(obj.prop) #读取obj的prop时还是 the prop value，没有被遮蔽
+
+Class.prop='baz' #重置了Class.prop特性，销毁特性对象
+print(obj.prop) #foo 显示了obj.prop 中dict的属性值
+
+
+#新添的类特性遮盖现有的实例属性
+
+print(obj.data) #bar
+print(Class.data)   #the class data attr
+Class.data=property(lambda self:'the "data" prop value') #data成为了Class的类特性
+print(obj.data) #the class data attr
+del Class.data  #the "data" prop value
+print(obj.data) #bar
+
+
+#总结：实例不能覆盖类的特性(property)，但可以覆盖属性
+```
+
+​	obj.attr这类的表达式不会从obj开始寻找attr，而是从obj.\_\_class\_\_开始，而且，仅当类中没有attr的特性时，Python才会在obj实例中寻找。这条规则不仅适用于特性，还适用于覆盖性描述符。其实特性就是覆盖性描述符的一种。
+
 ​	19.3.2	特性的文档
+
+```python
+weight = property(get_weight,set_weight,doc='weight in kilograms')
+
+class Foo:
+    @property
+    def bar(self):
+        '''The bar attribut'''
+        return self.__dict__['bar']
+    
+    @bar.setter
+    def bar(self,value):
+        self.__dict__['bar']=value
+```
 
 ####	19.4	定义一个特性工厂函数
 
+```python
+#quantity本质是一个property的包装，将property和需要更改的key绑定在一起
+def quantity(storage_name):
+    def qty_getter(instance):#符合property 的 fget函数参数要求
+        return instance.__dict__[storage_name]
+    def qty_setter(instance, value):
+        if value > 0:
+            instance.__dict__[storage_name] = value
+        else:
+            raise ValueError('value must be > 0')
+    return property(qty_getter,qty_setter)
+
+
+class LineItem:
+    #本质是将weight包装成一个property的类的实例
+    weight = quantity('weight')
+    price = quantity('price')
+
+    def __init__(self, description, weight, price):
+        self.description = description
+        #self.weight调用了property方法，=右侧为输入的参数weight值
+        self.weight = weight
+        #和self.price一样
+        self.price = price
+
+    def subtotal(self):
+        return self.weight * self.price
+
+
+a = LineItem('1', 10, 3)
+print(a.subtotal())
+
+```
+
 ####	19.5	处理属性删除的操作
+
+```python
+del my_object.an_attribute  #删除属性
+```
+
+在不使用装饰器的经典调用句法中，fdel参数用于设置删除函数
+
+```python
+member=property(member_getter,fdel=member_deleter) #member是函数名，调用obj.member
+```
+
+
 
 ####	19.6	处理属性的重要属性和函数
 
 ​	19.6.1	影响属性处理方式特殊属性
 
+​		\_\_class\_\_
+
+​			对象所属类的引用（obj.\_\_class\_\_等同于type(obj)）。python的某些特殊方法，比如\_\_getattr\_\_，只在对象的类中寻找，不在实例中寻找
+
+​		\_\_dict\_\_
+
+​			一个映射，储存对象货类的可写属性。有\_\_dict\_\_属性的对象，任何时候都能随意设置新属性。如果有\_\_slots\_\_属性，它的实例可能没有\_\_dict\_\_属性。
+
+​		\_\_slots\_\_
+
+​			类可以定义这个属性，限制实例有哪些属性。\_\_slots\_\_属性的值是一个字符串组成的元组，明确允许有的属性。
+
 ​	19.6.2	处理属性的内置函数
 
+​		dir([object])
+
+​			列出对象的大多数属性。如果没有指定可选的object参数，dir函数会列出当前作用域的名称
+
+​		getattr(object,name[,default])
+
+​			从object对象中获取name字符串对应的属性。获取的属性可能来自对象所属的类或超类。如果没有指定的属性，getattr函数抛出AttributerError异常，或者返回default参数的值（如果设定的话）。
+
+​		hasattr(object,name)
+
+​			如果object对象中存在指定的属性，或者能以某种方式（例如继承）通过object对象获取指定的属性，返回True
+
+​		setattr(object,name,value)
+
+​			把object对象指定属性的值设为value，前提是object对象能接受那个值。这个函数可能会创建新属性，或者覆盖现有的属性
+
+​		vars([object])
+
+​			返回object对象的\_\_dict\_\_属性：如果实例所属的类定义了\_\_slots\_\_属性，实例没有\_\_dict\_\_属性，那么vars函数不能处理那个实例。r颗没有指定参数，vars()的作用于locals()函数一样，返回表示本地作用域的字典
+
 ​	19.6.3	处理属性的特殊方式
+
+​		使用点号或者内置的getattr、hasattr和setattr函数存取属性都会出发下属列表中相对应的特殊方法，但是，直接通过实例的\_\_dict\_\_属性读写这些属性不会触发这些特殊方法。
+
+​		obj.attr,getattr(obj,'attr',42)	\_\_getattribute\_\_
+
+​		del obj.attr	Class.\_\_delattr\_\_(obj,'attr')
+
+​		dir(obj)	Classs.\_\_dir\_\_(obj)
+
+​		obj.no_such_attr  getattr(obj,'no_such_attr)  hasattr(obj,'no_such_attr')  有可能触发Class.\_\_getattr\_\_(obj,'no_such_attr') 方法（仅当obj、class和超类中找不到指定的属性时才触发
+
+​		尝试获取指定属性时（不包括寻找的是特殊属性或特殊方法）时，getattr和hasattr会触发 \_\_getattribute\_\_(self,name)，调用发生失败抛出AttributeError时，才会调用\_\_getattr\_\_。为了在获取obj实例的属性时不会导致无线递归，\_\_getattribute\_\_方法的实现需要使用super.\_\_getattribute\_\_(obj,name)
+
+​		尝试设定指定的属性会调用\_\_setattr\_\_(self,name,value)
 
 ####	19.7	本章小结
 
