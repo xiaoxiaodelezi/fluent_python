@@ -2064,9 +2064,9 @@ member=property(member_getter,fdel=member_deleter) #member是函数名，调用o
 
 ###	第20章：属性描述符
 
-####	20.1	描述符示例：验证属性
+https://zhuanlan.zhihu.com/p/336926012
 
-​	20.1.1	LineItem类第3版：一个简单的描述符
+####	20.1	描述符示例：验证属性	20.1.1	LineItem类第3版：一个简单的描述符
 
 ​	20.1.2	LineItem类第4版：自动获取储存属性的名称
 
