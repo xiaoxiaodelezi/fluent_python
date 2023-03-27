@@ -46,3 +46,4 @@ haystack = [1, 4, 5, 6, 8, 9]
 needle = 0
 position = bisect.bisect(haystack, needle)
 print(position)
+print(position)
